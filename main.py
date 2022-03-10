@@ -67,14 +67,8 @@ class Simulation:
                           len(demon.fragments) > 0 and demon.required_stamina <= self.pandora.stamina]
         else:
             defeatable = [demon for demon in self.demons if demon.required_stamina <= self.pandora.stamina]
-
-        if self.name == "02-iot-island-of-terror.txt":
-            defeatable.sort(
-                key=lambda demon: sum(demon.fragments[0:min(len(demon.fragments), self.max_turns - self.current_turn)]),
-                reverse=True)
-        else:
-            defeatable.sort(key=lambda demon: (demon.recovered_stamina - demon.required_stamina) / demon.rest_time,
-                            reverse=True)
+        defeatable.sort(key=lambda demon: (demon.recovered_stamina - demon.required_stamina) / demon.rest_time,
+                        reverse=True)
 
         return defeatable.pop(0) if len(defeatable) > 0 else None
 
@@ -108,7 +102,7 @@ def main(dataset_name: str):
             rest_time = int(line[1])
             recovery = int(line[2])
             fragments = []
-            if int(line[3]) != 0:
+            if line[3] != 0:
                 fragments: list[int] = [int(x) for x in line[4:-1] + [line[-1]]]
             demons.append(Demon(i, required_stamina, rest_time, recovery, fragments))
 
