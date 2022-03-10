@@ -1,6 +1,3 @@
-import os
-
-
 class Demon:
     def __init__(self, index: int, required_stamina: int, rest_time: int, recovered_stamina: int, fragments: list[int]):
         self.index = index
@@ -29,7 +26,8 @@ class Pandora:
 
 
 class Simulation:
-    def __init__(self, n_turns: int, pandora: Pandora, demons: list[Demon]):
+    def __init__(self, name: str, n_turns: int, pandora: Pandora, demons: list[Demon]):
+        self.name = name
         self.current_turn = 0
         self.max_turns = n_turns
         self.pandora = pandora
@@ -63,7 +61,12 @@ class Simulation:
         pass
 
     def chose_demon(self) -> Demon | None:
-        defeatable = [demon for demon in self.demons if demon.required_stamina <= self.pandora.stamina]
+        # suggerimento evelyn
+        if self.name == "./datasets/03-etheryum.txt":
+            defeatable = [demon for demon in self.demons if
+                          len(demon.fragments) > 0 and demon.required_stamina <= self.pandora.stamina]
+        else:
+            defeatable = [demon for demon in self.demons if demon.required_stamina <= self.pandora.stamina]
         defeatable.sort(key=lambda demon: (demon.recovered_stamina - demon.required_stamina) / demon.rest_time,
                         reverse=True)
 
@@ -103,7 +106,7 @@ def main(dataset_name: str):
                 fragments: list[int] = [int(x) for x in line[4:-1] + [line[-1]]]
             demons.append(Demon(i, required_stamina, rest_time, recovery, fragments))
 
-        simulation = Simulation(turns, pandorina, demons)
+        simulation = Simulation(dataset_name, turns, pandorina, demons)
         simulation.run()
 
         print("Defeated demons:")
@@ -119,7 +122,9 @@ def main(dataset_name: str):
 
 
 if __name__ == "__main__":
-    content = os.listdir("./datasets/")
-    # content = ["00-example.txt"]
-    for file in content:
-        main("./datasets/" + file)
+    main("./datasets/00-example.txt")
+    main("./datasets/01-the-cloud-abyss.txt")
+    main("./datasets/02-iot-island-of-terror.txt")
+    main("./datasets/03-etheryum.txt")
+    main("./datasets/04-the-desert-of-autonomous-machines.txt")
+    main("./datasets/05-androids-armageddon.txt")
