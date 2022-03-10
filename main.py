@@ -60,14 +60,11 @@ class Simulation:
         self.current_turn += 1
         pass
 
-    def chose_demon(self) -> Demon | None:
-        # suggerimento evelyn
-        if self.name == "./datasets/03-etheryum.txt":
-            defeatable = [demon for demon in self.demons if
-                          len(demon.fragments) > 0 and demon.required_stamina <= self.pandora.stamina]
-        else:
-            defeatable = [demon for demon in self.demons if demon.required_stamina <= self.pandora.stamina]
-        defeatable.sort(key=lambda demon: (demon.recovered_stamina - demon.required_stamina) / demon.rest_time,
+    def chose_demon(self) -> Demon:
+        defeatable = [demon for demon in self.demons if demon.required_stamina <= self.pandora.stamina]
+        defeatable.sort(key=lambda demon: sum(
+            demon.fragments[0:min(len(demon.fragments), self.max_turns - self.current_turn)]) * abs(
+            demon.recovered_stamina - demon.required_stamina) / demon.rest_time,
                         reverse=True)
 
         return defeatable.pop(0) if len(defeatable) > 0 else None
