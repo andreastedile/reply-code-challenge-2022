@@ -62,9 +62,9 @@ class Simulation:
 
     def chose_demon(self) -> Demon:
         defeatable = [demon for demon in self.demons if demon.required_stamina <= self.pandora.stamina]
-        defeatable.sort(key=lambda demon: sum(
-            demon.fragments[0:min(len(demon.fragments), self.max_turns - self.current_turn)]) * abs(
-            demon.recovered_stamina - demon.required_stamina) / demon.rest_time,
+        defeatable.sort(key=lambda demon: (sum(
+            demon.fragments[0:min(len(demon.fragments), self.max_turns - self.current_turn)]) + 1) * pow(abs(
+            demon.recovered_stamina - demon.required_stamina) / demon.rest_time, 2),
                         reverse=True)
 
         return defeatable.pop(0) if len(defeatable) > 0 else None
@@ -77,7 +77,6 @@ class Simulation:
             for demon in self.demons:
                 f.write(str(demon.index))
                 f.write("\n")
-
 
 def main(dataset_name: str):
     print(f"working on {dataset_name}")
